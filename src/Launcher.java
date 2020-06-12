@@ -7,17 +7,17 @@ public class Launcher extends JFrame {
     public static final int WIDTH = 300;
     public static final int HEIGHT = 160;
 
-    public static final Integer[] levels = {1, 2, 3, 4, 5};
+    public static final String[] levels = {"1", "2", "3", "4", "5", "Bonus"};
 
     public static final Font titleFont = new Font("Verdana", Font.PLAIN, 20);
     public static final Font bodyFont = new Font("Verdana", Font.PLAIN, 14);
 
-    private int selectedLevel;
+    private String selectedLevel;
 
     public Launcher() {
         super("Meg's World Launcher");
 
-        selectedLevel = 1;
+        selectedLevel = "1";
 
         JLabel title = new JLabel("MEG'S WORLD");
         title.setBounds(0, 20, WIDTH, 20);
@@ -31,14 +31,14 @@ public class Launcher extends JFrame {
         levelLabel.setHorizontalAlignment(SwingConstants.CENTER);
         levelLabel.setFont(bodyFont);
 
-        JComboBox<Integer> levelSelect = new JComboBox(levels);
+        JComboBox<String> levelSelect = new JComboBox(levels);
         levelSelect.setBounds((WIDTH / 2) + 20, 60, (WIDTH / 2) - 40, 30);
         levelSelect.setFont(bodyFont);
 
         levelSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Integer selection = (Integer) levelSelect.getSelectedItem();
+                String selection = (String) levelSelect.getSelectedItem();
                 if (!selection.equals(selectedLevel)) {
                     selectedLevel = selection;
                     //System.out.println("New selected level: " + selectedLevel);
@@ -61,7 +61,7 @@ public class Launcher extends JFrame {
                 gameFrame.add(game);
                 gameFrame.pack();
                 gameFrame.setSize(Game.WIDTH, Game.HEIGHT);
-                gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 gameFrame.setResizable(false);
                 gameFrame.setLocationRelativeTo(null);
                 gameFrame.setVisible(true);

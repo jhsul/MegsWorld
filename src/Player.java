@@ -70,6 +70,8 @@ public class Player extends AABB{
         y += dy;
         x += dx;
 
+        //if(dx > 0 )
+
         if(dx > 0) {
             switch(frameCounter) {
                 case 1:

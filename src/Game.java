@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 
+    public static final Font winFont = new Font("Verdana", Font.PLAIN, 80);
+
     public static final int WIDTH = 600;
     public static final int HEIGHT = 400;
 
@@ -18,10 +20,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     public static final double ticksPerSecond = 40;
 
-    private int level;
     private int referenceFrame;
 
     private boolean running;
+    private boolean completed;
 
     private Thread thread;
 
@@ -30,9 +32,9 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     private Player player;
 
-    public Game(int selectedLevel) {
+    public Game(String selectedLevel) {
         running = false;
-        level = selectedLevel;
+        completed = false;
         referenceFrame = 0;
         player = new Player(STARTX, STARTY);
 
@@ -73,19 +75,22 @@ public class Game extends Canvas implements Runnable, KeyListener {
         System.exit(1);
     }
 
-    private void loadLevel(int level) throws FileNotFoundException{
+    private void loadLevel(String level) throws FileNotFoundException{
         String filename = "levels/" + level + ".csv";
         File levelFile = new File(filename);
         Scanner reader = new Scanner(levelFile);
         while(reader.hasNextLine()) {
             String data[] = reader.nextLine().split(",");
-            if(data[0].equals("terrain")) {
+            if(data.length == 0) {
+                //pass
+            }
+            else if(data[0].equals("terrain")) {
                 allTerrain.add(new Terrain(Integer.parseInt(data[1]),
                         Integer.parseInt(data[2]),
                         Integer.parseInt(data[3]),
                         Integer.parseInt(data[4])));
             }
-            if(data[0].equals("coin")) {
+            else if(data[0].equals("coin")) {
                 allCoins.add(new Coin(Integer.parseInt(data[1]),
                         Integer.parseInt(data[2])));
             }
@@ -113,6 +118,14 @@ public class Game extends Canvas implements Runnable, KeyListener {
     }
     private void tick() {
         player.tick();
+
+        boolean tmp = true;
+
+        for(Coin c : allCoins) {
+            tmp = tmp && c.collected;
+        }
+        completed = tmp;
+
         referenceFrame = player.x - WIDTH/2;
         if(player.touchingGround) {
             if(!player.intersectsBelow(player.onTopOf)) {
@@ -124,6 +137,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
         else if(player.y > HEIGHT) {
             player.x = STARTX;
             player.y = STARTY;
+            resetCoins();
+            completed = false;
         }
         if(player.touchingRight) {
             if(!player.intersectsRight(player.againstRight)) {
@@ -190,6 +205,18 @@ public class Game extends Canvas implements Runnable, KeyListener {
         }
         for(Coin c : allCoins) {
             c.render(g, referenceFrame);
+        }
+        if(completed) {
+            String completedText = "You won!!";
+            g.setFont(winFont);
+            int w = g.getFontMetrics().stringWidth(completedText);
+            g.drawString(completedText, (WIDTH-w)/2, HEIGHT/2);
+        }
+    }
+
+    public void resetCoins() {
+        for(Coin c : allCoins) {
+            c.collected = false;
         }
     }
 
