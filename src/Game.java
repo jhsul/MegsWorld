@@ -2,8 +2,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -49,6 +49,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
             e.printStackTrace();
             System.exit(0);
         }
+        catch(URISyntaxException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
         setBackground(new Color(0xcaf0f8));
     }
 
@@ -75,9 +79,13 @@ public class Game extends Canvas implements Runnable, KeyListener {
         System.exit(1);
     }
 
-    private void loadLevel(String level) throws FileNotFoundException{
+    private void loadLevel(String level) throws FileNotFoundException, URISyntaxException {
         String filename = "levels/" + level + ".csv";
+        //InputStream levelFile = Game.class.getResourceAsStream(filename);
         File levelFile = new File(filename);
+        if(levelFile == null) {
+            System.out.println(filename);
+        }
         Scanner reader = new Scanner(levelFile);
         while(reader.hasNextLine()) {
             String data[] = reader.nextLine().split(",");
